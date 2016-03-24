@@ -1,16 +1,25 @@
 -module(wok_mail).
 
 -export([
-  send/4,
-  deliver/3,
-  deliver/4
-  ]).
+         send/4,
+         deliver/3,
+         deliver/4
+        ]).
 
 %% @equiv deliver(Module, To, Data, [])
 deliver(Module, To, Data) ->
   deliver(Module, To, Data, []).
 
 %% @doc
+%% Send an email
+%%
+%% Options:
+%% <pre>
+%% {cc, [string()] | [binary()]}
+%% {bcc, [string()] | [binary()]}
+%% {locale, binary()}
+%% {provider, atom()}
+%% </pre>
 %% @end
 deliver(Module, To, Data, Options) ->
   send(
@@ -20,7 +29,9 @@ deliver(Module, To, Data, Options) ->
     [{templates, Module:templates(), Data},
      {cc, buclists:keyfind(cc, 1, Options, []) ++ Module:cc()},
      {bcc, buclists:keyfind(bcc, 1, Options, []) ++ Module:bcc()},
-     {callback, fun Module:done/1}]).
+     {callback, fun Module:done/1},
+     {locale, buclists:keyfind(locale, 1, Options, <<"xx_XX">>)},
+     {provider, buclists:keyfind(provider, 1, Options, wok_smtp_mail)}]).
 
 %% @doc
 %% Send an email
@@ -33,6 +44,8 @@ deliver(Module, To, Data, Options) ->
 %% {body, string() | binary()}
 %% {attachment, [string()] | [binary()]}
 %% {callback, function()}
+%% {locale, binary()}
+%% {provider, atom()}
 %% </pre>
 %%
 %% Example:
@@ -51,49 +64,56 @@ deliver(Module, To, Data, Options) ->
 %% @end
 -spec send(string() | binary(), string() | binary() | [string()] | [binary()], string() | binary(), list()) -> {ok, pid()} | {error, any()}.
 send(From, To, Subject, Options) ->
+  Locale = buclist:keyfind(locale, 1, Options, <<"xx_XX">>),
+  Provider = buclist:keyfind(provider, 1, Options, wok_smtp_mail),
   BFrom = bucs:to_binary(From),
   BSubject = bucs:to_binary(Subject),
   Dest = [{<<"To">>, to_list_of_binary(To)}] ++
          case lists:keyfind(cc, 1, Options) of
-    {cc, Data0} -> [{<<"Cc">>, to_list_of_binary(Data0)}];
-    _ -> []
-  end ++ case lists:keyfind(bcc, 1, Options) of
-    {bcc, Data1} -> [{<<"Bcc">>, to_list_of_binary(Data1)}];
-    _ -> []
-  end,
+           {cc, Data0} -> [{<<"Cc">>, to_list_of_binary(Data0)}];
+           _ -> []
+         end ++ case lists:keyfind(bcc, 1, Options) of
+                  {bcc, Data1} -> [{<<"Bcc">>, to_list_of_binary(Data1)}];
+                  _ -> []
+         end,
   Attachments = case lists:keyfind(attachments, 1, Options) of
-    {attachments, Data2} -> to_list_of_binary(Data2);
-    false -> []
-  end,
-  Body = case lists:keyfind(template, 1, Options) of
-    {template, Template, TemplateData} -> 
-      HtmlTemplate = list_to_atom(atom_to_list(Template) ++ "_html"),
-      TextTemplate = list_to_atom(atom_to_list(Template) ++ "_txt"),
-      case bucs:module_exist(HtmlTemplate) of
-        false -> [];
-        true -> 
-          {ok, Html} = HtmlTemplate:render(TemplateData), 
-          [{html, ebinary:concat(Html)}]
-      end ++ case bucs:module_exist(TextTemplate) of
-        false -> [];
-        true -> 
-          {ok, Text} = TextTemplate:render(TemplateData), 
-          [{text, ebinary:concat(Text)}]
-      end;
-    _ -> case lists:keyfind(body, 1, Options) of
-        {body, Data3} -> [{text, bucs:to_binary(Data3)}];
-        _ -> [{text, <<"">>}]
-      end
-    end,
+                  {attachments, Data2} -> to_list_of_binary(Data2);
+                  false -> []
+                end,
   Callback = buclists:keyfind(callback, 1, Options, undefined),
-  erlang:apply(provider(), send, [BFrom, Dest, BSubject, Body, Attachments, Callback]).
+  Body = case lists:keyfind(template, 1, Options) of
+           {template, Templates, TemplateData} -> 
+             lists:foldl(fun({Type, Template}, Acc) ->
+                           case template_engine(Template) of
+                             error -> 
+                               Acc;
+                             {ok, Engine} ->
+                               case erlang:apply(Engine, yield, [Template, Locale, TemplateData]) of
+                                 {ok, Output} ->
+                                   [{Type, bucbinary:join(Output, <<>>)}|Acc];
+                                 _ ->
+                                   Acc
+                               end
+                           end
+                       end, [], Templates);
+           _ -> case lists:keyfind(body, 1, Options) of
+                  {body, Data3} -> [{text, bucs:to_binary(Data3)}];
+                  _ -> []
+                end
+         end,
+  case Body of
+    [] -> {error, missing_body};
+    _ ->
+      erlang:apply(Provider, send, [BFrom, Dest, BSubject, Body, Attachments, Callback])
+  end.
 
 % private
 
 to_list_of_binary(Data) ->
   case bucs:is_string(Data) of
     true -> [list_to_binary(Data)];
-    false -> case is_binary(Data) of
+    false -> 
+      case is_binary(Data) of
         true -> [Data];
         false -> lists:map(fun bucs:to_binary/1, Data)
       end
@@ -111,7 +131,4 @@ template_engine(View) when is_list(View) ->
   end;
 template_engine(View) ->
   template_engine(bucs:to_string(View)).
-
-provider() ->
-  wok_smtp_mail.
 

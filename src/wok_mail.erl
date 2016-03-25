@@ -119,7 +119,6 @@ to_list_of_binary(Data) ->
       end
   end.
 
-
 template_engine(View) when is_list(View) ->
   [Ext|_] = lists:reverse(string:tokens(View, "._")),
   Engine = bucs:to_atom("wok_" ++ Ext ++ "_engine"),

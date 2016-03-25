@@ -4,6 +4,7 @@ title: Wok Mail
 toc:
   - usage
   - api
+  - smtp
 
 language_tabs:
   - erlang

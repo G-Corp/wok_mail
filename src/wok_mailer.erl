@@ -6,3 +6,4 @@
 -callback bcc() -> [string()] | [binary()].
 -callback templates() -> [{text|html, string()}].
 -callback done(Response :: any()) -> any().
+

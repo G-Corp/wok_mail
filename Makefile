@@ -1,5 +1,12 @@
 PROJECT = wok_mail
 
+DEP_PLUGINS = mix.mk
+BUILD_DEPS = mix.mk
+ELIXIR_VERSION = ~> 1.2
+ELIXIR_BINDINGS = wok_mail
+
+dep_mix.mk = git https://github.com/botsunit/mix.mk.git master
+
 DEPS = gen_smtp bucs doteki
 
 dep_gen_smtp = git https://github.com/danikp/gen_smtp.git master
@@ -25,4 +32,6 @@ include erlang.mk
 
 docs:: edoc 
 	@${CP} _doc/* doc
+
+release: app mix.all
 

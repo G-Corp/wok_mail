@@ -1,0 +1,3 @@
+%% encoding: UTF-8
+{application,wok_mail}.
+{modules,[wok_mail,wok_mailer]}.

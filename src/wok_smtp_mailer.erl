@@ -1,4 +1,5 @@
--module(wok_smtp_mail).
+% @hidden
+-module(wok_smtp_mailer).
 
 -export([send/6]).
 

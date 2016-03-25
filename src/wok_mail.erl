@@ -23,12 +23,12 @@ deliver(Module, To, Data) ->
 %% @end
 deliver(Module, To, Data, Options) ->
   send(
-    Module:from(),
+    erlang:apply(Module, from, []),
     To,
-    buclists:keyfind(subject, 1, Options, Module:subject()),
-    [{templates, Module:templates(), Data},
-     {cc, buclists:keyfind(cc, 1, Options, []) ++ Module:cc()},
-     {bcc, buclists:keyfind(bcc, 1, Options, []) ++ Module:bcc()},
+    buclists:keyfind(subject, 1, Options, erlang:apply(Module, subject, [])),
+    [{templates, erlang:apply(Module, templates, []), Data},
+     {cc, buclists:keyfind(cc, 1, Options, []) ++ erlang:apply(Module, cc, [])},
+     {bcc, buclists:keyfind(bcc, 1, Options, []) ++ erlang:apply(Module, bcc, [])},
      {callback, fun Module:done/1},
      {locale, buclists:keyfind(locale, 1, Options, <<"xx_XX">>)},
      {provider, buclists:keyfind(provider, 1, Options, wok_smtp_mail)}]).
@@ -57,7 +57,7 @@ deliver(Module, To, Data, Options) ->
 %%   [{cc, ["tania@example.com", "tom@example.com"]},
 %%    {bcc, "jane@example.com"},
 %%    {templates, [{text, "template.txt.tmpl"}, {html, "template.html.tmpl"}], Data} 
-%%    | {body, <<"hello world !!!">>},
+%%    | {body, &lt;&lt;"hello world !!!"&gt;&gt;},
 %%    {attachments, ["/home/greg/photo.png"]}
 %%    {callback, Fun module:function/1}]).
 %% </pre>

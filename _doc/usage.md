@@ -42,6 +42,7 @@ done(_Response) ->
 
 ```elixir
 defmodule My.Mailer do
+  @behaviour Wok.Mailer
   use Wok.Mailer
 
   def from(), do:

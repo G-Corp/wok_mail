@@ -7,11 +7,11 @@ ELIXIR_BINDINGS = wok_mail
 
 dep_mix.mk = git https://github.com/botsunit/mix.mk.git master
 
-DEPS = gen_smtp bucs doteki
+DEPS = bucs doteki gen_smtp
 
-dep_gen_smtp = git https://github.com/danikp/gen_smtp.git master
 dep_bucs = git https://github.com/botsunit/bucs.git master
 dep_doteki = git https://github.com/botsunit/doteki.git master
+dep_gen_smtp = git https://github.com/Vagabond/gen_smtp.git master
 
 DOC_DEPS = edown
 

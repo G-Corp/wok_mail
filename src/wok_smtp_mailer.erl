@@ -25,7 +25,12 @@ send(From, Dest, Subject, Bodies, Attachments, Callback) ->
   Mail = mimemail:encode(gen_mail(HasAttachement, MultipartBody, Headers, Bodies, Attachments)),
   Email = {binary_to_list(From), dests_list(Dest), Mail},
   Relay = doteki:get_env([wok, mailer, smtp], []),
-  gen_smtp_client:send(Email, Relay, Callback).
+  case application:ensure_all_started(gen_smtp) of
+    {ok, _} ->
+      gen_smtp_client:send(Email, Relay, Callback);
+    _ ->
+      erlang:apply(Callback, [{error, gen_smtp_start_error}])
+  end.
 
 dests_list(Dests) ->
   lists:foldl(fun({_, Dest}, Acc) ->

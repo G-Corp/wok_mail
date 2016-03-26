@@ -31,7 +31,8 @@ deliver(Module, To, Data, Options) ->
      {bcc, buclists:keyfind(bcc, 1, Options, []) ++ erlang:apply(Module, bcc, [])},
      {callback, fun Module:done/1},
      {locale, buclists:keyfind(locale, 1, Options, <<"xx_XX">>)},
-     {provider, buclists:keyfind(provider, 1, Options, wok_smtp_mailer)}]).
+     {provider, buclists:keyfind(provider, 1, Options, wok_smtp_mailer)}]
+   ++ buclists:keyfind(attachments, 1, Options, [])).
 
 %% @doc
 %% Send an email
@@ -42,7 +43,7 @@ deliver(Module, To, Data, Options) ->
 %% {bcc, [string()] | [binary()]}
 %% {templates, [{text|html, string()}], [{atom(), any()}]}
 %% {body, string() | binary()}
-%% {attachment, [string()] | [binary()]}
+%% {attachments, [string()] | [binary()]}
 %% {callback, function()}
 %% {locale, binary()}
 %% {provider, atom()}

@@ -63,7 +63,7 @@ Options:
   {bcc, [string()] | [binary()]}
   {templates, [{text|html, string()}], [{atom(), any()}]}
   {body, string() | binary()}
-  {attachment, [string()] | [binary()]}
+  {attachments, [string()] | [binary()]}
   {callback, function()}
   {locale, binary()}
   {provider, atom()}

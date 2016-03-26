@@ -16,9 +16,9 @@ defmodule Wok.Mail.Mixfile do
 
 	defp deps do
 		[ 
-			{:gen_smtp, ~r/.*/, git: "https://github.com/danikp/gen_smtp.git", branch: "master"},  
 			{:bucs, ~r/.*/, git: "https://github.com/botsunit/bucs.git", branch: "master"},  
-			{:doteki, ~r/.*/, git: "https://github.com/botsunit/doteki.git", branch: "master"},
+			{:doteki, ~r/.*/, git: "https://github.com/botsunit/doteki.git", branch: "master"},  
+			{:gen_smtp, ~r/.*/, git: "https://github.com/Vagabond/gen_smtp.git", branch: "master"},
 		]
 	end
 end

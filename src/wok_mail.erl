@@ -31,7 +31,7 @@ deliver(Module, To, Data, Options) ->
      {bcc, buclists:keyfind(bcc, 1, Options, []) ++ erlang:apply(Module, bcc, [])},
      {callback, fun Module:done/1},
      {locale, buclists:keyfind(locale, 1, Options, <<"xx_XX">>)},
-     {provider, buclists:keyfind(provider, 1, Options, wok_smtp_mail)}]).
+     {provider, buclists:keyfind(provider, 1, Options, wok_smtp_mailer)}]).
 
 %% @doc
 %% Send an email
@@ -51,12 +51,12 @@ deliver(Module, To, Data, Options) ->
 %% Example:
 %% <pre>
 %% send(
-%%   "greg@example.com", 
+%%   "greg@example.com",
 %%   ["bob@example.com", "john@example.com"]
 %%   "This is a mail",
 %%   [{cc, ["tania@example.com", "tom@example.com"]},
 %%    {bcc, "jane@example.com"},
-%%    {templates, [{text, "template.txt.tmpl"}, {html, "template.html.tmpl"}], Data} 
+%%    {templates, [{text, "template.txt.tmpl"}, {html, "template.html.tmpl"}], Data}
 %%    | {body, &lt;&lt;"hello world !!!"&gt;&gt;},
 %%    {attachments, ["/home/greg/photo.png"]}
 %%    {callback, Fun module:function/1}]).
@@ -64,8 +64,8 @@ deliver(Module, To, Data, Options) ->
 %% @end
 -spec send(string() | binary(), string() | binary() | [string()] | [binary()], string() | binary(), list()) -> {ok, pid()} | {error, any()}.
 send(From, To, Subject, Options) ->
-  Locale = buclist:keyfind(locale, 1, Options, <<"xx_XX">>),
-  Provider = buclist:keyfind(provider, 1, Options, wok_smtp_mail),
+  Locale = buclists:keyfind(locale, 1, Options, <<"xx_XX">>),
+  Provider = buclists:keyfind(provider, 1, Options, wok_smtp_mail),
   BFrom = bucs:to_binary(From),
   BSubject = bucs:to_binary(Subject),
   Dest = [{<<"To">>, to_list_of_binary(To)}] ++
@@ -81,11 +81,11 @@ send(From, To, Subject, Options) ->
                   false -> []
                 end,
   Callback = buclists:keyfind(callback, 1, Options, undefined),
-  Body = case lists:keyfind(template, 1, Options) of
-           {template, Templates, TemplateData} -> 
+  Body = case lists:keyfind(templates, 1, Options) of
+           {templates, Templates, TemplateData} ->
              lists:foldl(fun({Type, Template}, Acc) ->
                            case template_engine(Template) of
-                             error -> 
+                             error ->
                                Acc;
                              {ok, Engine} ->
                                case erlang:apply(Engine, yield, [Template, Locale, TemplateData]) of
@@ -111,8 +111,9 @@ send(From, To, Subject, Options) ->
 
 to_list_of_binary(Data) ->
   case bucs:is_string(Data) of
-    true -> [list_to_binary(Data)];
-    false -> 
+    true ->
+      [list_to_binary(Data)];
+    false ->
       case is_binary(Data) of
         true -> [Data];
         false -> lists:map(fun bucs:to_binary/1, Data)

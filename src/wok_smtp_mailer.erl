@@ -14,7 +14,7 @@
 %   Callback).
 send(From, Dest, Subject, Bodies, Attachments, Callback) ->
   Headers = [
-             {<<"From">>, From}, 
+             {<<"From">>, From},
              {<<"Subject">>, Subject},
              {<<"MIME-Version">>, <<"1.0">>},
              {<<"Message-ID">>, list_to_binary(smtp_util:generate_message_id())},
@@ -23,10 +23,9 @@ send(From, Dest, Subject, Bodies, Attachments, Callback) ->
   HasAttachement = length(Attachments) > 0,
   MultipartBody = length(Bodies) > 1,
   Mail = mimemail:encode(gen_mail(HasAttachement, MultipartBody, Headers, Bodies, Attachments)),
-  gen_smtp_client:send(
-    {binary_to_list(From), dests_list(Dest), Mail},
-    doteki:get_env([mailer, smtp], []), 
-    Callback).
+  Email = {binary_to_list(From), dests_list(Dest), Mail},
+  Relay = doteki:get_env([wok, mailer, smtp], []),
+  gen_smtp_client:send(Email, Relay, Callback).
 
 dests_list(Dests) ->
   lists:foldl(fun({_, Dest}, Acc) ->
@@ -69,7 +68,7 @@ gen_mail(true, true, Headers, Bodies, Attachments) ->
 gen_single(Headers, {Type, Body}) ->
   case Type of
     text -> {
-      <<"text">>, <<"plain">>, Headers, 
+      <<"text">>, <<"plain">>, Headers,
       [{<<"content-type-params">>,
         [{<<"charset">>,<<"UTF-8">>}],
         {<<"disposition">>,<<"inline">>}}],
@@ -83,11 +82,11 @@ gen_single(Headers, {Type, Body}) ->
     _ -> error
   end.
 
-gen_multipart_alternative(Bodies) -> 
+gen_multipart_alternative(Bodies) ->
   gen_multipart_alternative([], Bodies).
 gen_multipart_alternative(Headers, Bodies) ->
   Boundary = list_to_binary(smtp_util:generate_message_boundary()),
-  {<<"multipart">>, <<"alternative">>, 
+  {<<"multipart">>, <<"alternative">>,
    Headers ++ [{<<"Content-Type">>, <<"multipart/alternative; boundary=", Boundary/binary>>}],
    [{<<"content-type-params">>, [{<<"boundary">>, Boundary}]},
     {<<"disposition">>,<<"inline">>},
@@ -96,7 +95,7 @@ gen_multipart_alternative(Headers, Bodies) ->
 
 gen_multipart_mixed(Headers, Bodies) ->
   Boundary = list_to_binary(smtp_util:generate_message_boundary()),
-  {<<"multipart">>, <<"mixed">>, 
+  {<<"multipart">>, <<"mixed">>,
    Headers ++ [{<<"Content-Type">>, <<"multipart/mixed; boundary=", Boundary/binary>>}],
    [{<<"content-type-params">>, [{<<"boundary">>, Boundary}]},
     {<<"disposition">>,<<"inline">>},

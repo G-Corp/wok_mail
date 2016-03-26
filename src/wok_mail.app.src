@@ -1,7 +1,6 @@
-{application, wok_mail, [
-	{description, ""},
-	{vsn, "0.0.1"},
-	{modules, []},
-	{registered, []},
-	{applications, [kernel,stdlib]}
-]}.
+{application,wok_mail,
+             [{description,[]},
+              {vsn,"0.0.1"},
+              {modules,[]},
+              {registered,[]},
+              {applications,[kernel,stdlib]}]}.

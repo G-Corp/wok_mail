@@ -66,7 +66,7 @@ deliver(Module, To, Data, Options) ->
 -spec send(string() | binary(), string() | binary() | [string()] | [binary()], string() | binary(), list()) -> {ok, pid()} | {error, any()}.
 send(From, To, Subject, Options) ->
   Locale = buclists:keyfind(locale, 1, Options, <<"xx_XX">>),
-  Provider = buclists:keyfind(provider, 1, Options, wok_smtp_mail),
+  Provider = buclists:keyfind(provider, 1, Options, wok_smtp_mailer),
   BFrom = bucs:to_binary(From),
   BSubject = bucs:to_binary(Subject),
   Dest = [{<<"To">>, to_list_of_binary(To)}] ++

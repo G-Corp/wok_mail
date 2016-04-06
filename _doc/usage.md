@@ -77,8 +77,8 @@ defmodule My.Mailer do
     ["smith@example.com", "clark@example.com"]
 
   def templates(), do:
-    [{text, "mails/welcome.txt.tmpl"},
-     {html, "mails/welcome.html.tmpl"}]
+    [{:text, "mails/welcome.txt.tmpl"},
+     {:html, "mails/welcome.html.tmpl"}]
 
   def done(_response) do
     :ok

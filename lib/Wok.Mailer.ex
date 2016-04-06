@@ -8,6 +8,8 @@ defmodule Wok.Mailer do
 
   defmacro __using__(_) do
     quote do
+      @behaviour Wok.Mailer
+
       def deliver(to, data) do
         Wok.Mail.deliver(__MODULE__, to,data)
       end

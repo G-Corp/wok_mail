@@ -27,9 +27,14 @@ send(From, Dest, Subject, Bodies, Attachments, Callback) ->
   Relay = doteki:get_env([wok, mailer, smtp], []),
   case application:ensure_all_started(gen_smtp) of
     {ok, _} ->
-      gen_smtp_client:send(Email, Relay, Callback);
+      case gen_smtp_client:send(Email, Relay, Callback) of
+        {ok, Pid} -> {ok, Pid};
+        Pid when is_pid(Pid) -> {ok, Pid};
+        Other -> Other
+      end;
     _ ->
-      erlang:apply(Callback, [{error, gen_smtp_start_error}])
+      erlang:apply(Callback, [{error, gen_smtp_start_error}]),
+      {error, gen_smtp_start_error}
   end.
 
 dests_list(Dests) ->

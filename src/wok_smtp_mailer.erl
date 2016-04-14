@@ -45,7 +45,7 @@ get_dests(Dests) ->
                   if
                     Type =:= <<"To">> orelse Type =:= <<"Cc">> ->
                       case is_list(Dest) of
-                        true -> [{Type, lists:foldr(fun(A, B) -> <<A/binary, ",", B/binary>> end, <<>>, Dest)}|Acc];
+                        true -> [{Type, bucbinary:join(Dest, <<",">>)}|Acc];
                         false -> [{Type, Dest}|Acc]
                       end;
                     true -> Acc

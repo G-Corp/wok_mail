@@ -71,14 +71,14 @@ send(From, To, Subject, Options) ->
   BSubject = bucs:to_binary(Subject),
   Dest = [{<<"To">>, to_list_of_binary(To)}] ++
          case lists:keyfind(cc, 1, Options) of
-           {cc, Data0} -> [{<<"Cc">>, to_list_of_binary(Data0)}];
+           {cc, Data0=[_|_]} -> [{<<"Cc">>, to_list_of_binary(Data0)}];
            _ -> []
          end ++ case lists:keyfind(bcc, 1, Options) of
-                  {bcc, Data1} -> [{<<"Bcc">>, to_list_of_binary(Data1)}];
+                  {bcc, Data1=[_|_]} -> [{<<"Bcc">>, to_list_of_binary(Data1)}];
                   _ -> []
          end,
   Attachments = case lists:keyfind(attachments, 1, Options) of
-                  {attachments, Data2} -> to_list_of_binary(Data2);
+                  {attachments, Data2=[_|_]} -> to_list_of_binary(Data2);
                   false -> []
                 end,
   Callback = buclists:keyfind(callback, 1, Options, undefined),
@@ -91,7 +91,7 @@ send(From, To, Subject, Options) ->
                              {ok, Engine} ->
                                case erlang:apply(Engine, yield, [Template, Locale, TemplateData]) of
                                  {ok, Output} ->
-                                   [{Type, bucbinary:join(Output, <<>>)}|Acc];
+                                   [{Type, bucs:to_binary(Output)}|Acc];
                                  _ ->
                                    Acc
                                end
@@ -110,6 +110,8 @@ send(From, To, Subject, Options) ->
 
 % private
 
+to_list_of_binary([]) ->
+  [];
 to_list_of_binary(Data) ->
   case bucs:is_string(Data) of
     true ->

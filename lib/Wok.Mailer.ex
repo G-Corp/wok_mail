@@ -3,7 +3,7 @@ defmodule Wok.Mailer do
   @callback subject() :: String.t
   @callback cc() :: [String.t]
   @callback bcc() :: [String.t]
-  @callback template() :: [{:text|:html, String.t}]
+  @callback templates() :: [{:text|:html, String.t}]
   @callback done(any) :: any
 
   defmacro __using__(_) do

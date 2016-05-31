@@ -9,9 +9,9 @@ dep_mix.mk = git https://github.com/botsunit/mix.mk.git master
 
 DEPS = bucs doteki gen_smtp
 
-dep_bucs = git https://github.com/botsunit/bucs.git master
-dep_doteki = git https://github.com/botsunit/doteki.git master
-dep_gen_smtp = git https://github.com/Vagabond/gen_smtp.git master
+dep_bucs = git https://github.com/botsunit/bucs.git 0.0.1
+dep_doteki = git https://github.com/botsunit/doteki.git 0.0.1
+dep_gen_smtp = git https://github.com/Vagabond/gen_smtp.git 0.10.0
 
 DOC_DEPS = edown
 

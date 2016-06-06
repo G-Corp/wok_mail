@@ -1,37 +1,23 @@
-PROJECT = wok_mail
+include bu.mk
 
-DEP_PLUGINS = mix.mk
-BUILD_DEPS = mix.mk
-ELIXIR_VERSION = ~> 1.2
-ELIXIR_BINDINGS = wok_mail
+.PHONY: doc
+REBAR = ./rebar3
 
-dep_mix.mk = git https://github.com/botsunit/mix.mk.git master
+compile:
+	$(verbose) $(REBAR) compile
 
-DEPS = bucs doteki gen_smtp
+tests:
+	$(verbose) $(REBAR) eunit
 
-dep_bucs = git https://github.com/botsunit/bucs.git 0.0.1
-dep_doteki = git https://github.com/botsunit/doteki.git 0.0.1
-dep_gen_smtp = git https://github.com/Vagabond/gen_smtp.git 0.10.0
+doc:
+	$(verbose) $(REBAR) as doc edoc
 
-DOC_DEPS = edown
+elixir:
+	$(verbose) $(REBAR) elixir generate_mix
+	$(verbose) $(REBAR) elixir generate_lib
 
-dep_edown = git https://github.com/botsunit/edown.git master
+dist: compile tests elixir doc
 
-CP = cp
-
-EDOC_OPTS = {doclet, edown_doclet} \
-						, {app_default, "http://www.erlang.org/doc/man"} \
-						, {source_path, ["src"]} \
-						, {overview, "overview.edoc"} \
-						, {stylesheet, ""} \
-						, {image, ""} \
-						, {edown_target, gitlab} \
-						, {top_level_readme, {"./README.md", "https://gitlab.botsunit.com/msaas/${PROJECT}"}}
-
-include erlang.mk
-
-docs:: edoc 
-	@${CP} _doc/* doc
-
-release: app mix.all
+distclean:
+	$(verbose) rm -rf _build rebar.lock mix.lock test/eunit deps
 

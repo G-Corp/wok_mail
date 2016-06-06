@@ -11,6 +11,7 @@ tests:
 
 doc:
 	$(verbose) $(REBAR) as doc edoc
+	$(verbose) ${CP} _doc/* doc
 
 elixir:
 	$(verbose) $(REBAR) elixir generate_mix

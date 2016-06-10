@@ -11,7 +11,7 @@ defmodule Wok.Mailer do
       @behaviour Wok.Mailer
 
       def deliver(to, data) do
-        Wok.Mail.deliver(__MODULE__, to,data)
+        Wok.Mail.deliver(__MODULE__, to, data)
       end
       def deliver(to, data, options) do
         Wok.Mail.deliver(__MODULE__, to, data, options)

@@ -4,7 +4,7 @@ defmodule Wok.Mail.Mixfile do
   def project do
     [
       app: :wok_mail,
-      version: "0.0.4",
+      version: "0.1.0",
       elixir: "~> 1.2",
       build_embedded: Mix.env == :prod,
       start_permanent: Mix.env == :prod,
@@ -14,15 +14,15 @@ defmodule Wok.Mail.Mixfile do
 
   def application do
     [
-       applications: [:kernel, :stdlib],
+       applications: [],
        env: []
     ]
   end
 
   defp deps do
     [
-      {:bucs, git: "https://github.com/botsunit/bucs.git", branch: "master"},
-      {:doteki, git: "https://github.com/botsunit/doteki.git", branch: "master"},
+      {:bucs, git: "https://github.com/botsunit/bucs.git", tag: "0.0.2"},
+      {:doteki, git: "https://github.com/botsunit/doteki.git", tag: "0.1.0"},
       {:gen_smtp, "~> 0.10.0"}    
     ]
   end

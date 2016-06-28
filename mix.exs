@@ -21,9 +21,9 @@ defmodule Wok.Mail.Mixfile do
 
   defp deps do
     [
-      {:bucs, git: "https://github.com/botsunit/bucs.git", tag: "0.0.2"},
-      {:doteki, git: "https://github.com/botsunit/doteki.git", tag: "0.1.0"},
-      {:gen_smtp, "~> 0.10.0"}    
+      {:bucs, "~> 0.1.0"},
+      {:doteki, "~> 0.1.0"},
+      {:gen_smtp, "~> 0.11.0"}    
     ]
   end
 end

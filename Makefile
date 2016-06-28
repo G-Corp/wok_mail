@@ -1,7 +1,5 @@
-include bu.mk
-
 .PHONY: doc
-REBAR = ./rebar3
+include bu.mk
 
 compile:
 	$(verbose) $(REBAR) compile

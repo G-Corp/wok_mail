@@ -16,5 +16,4 @@ queues
 xrefr
 test/eunit/
 _build/
-mix.lock
 

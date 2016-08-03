@@ -80,14 +80,14 @@ gen_single(Headers, {Type, Body}) ->
     text -> {
       <<"text">>, <<"plain">>, Headers,
       [{<<"content-type-params">>,
-        [{<<"charset">>,<<"UTF-8">>}],
-        {<<"disposition">>,<<"inline">>}}],
+        [{<<"charset">>, <<"UTF-8">>}],
+        {<<"disposition">>, <<"inline">>}}],
       Body};
     html -> {
-      <<"text">>,<<"html">>, Headers,
+      <<"text">>, <<"html">>, Headers,
       [{<<"content-type-params">>,
-        [{<<"charset">>,<<"UTF-8">>}],
-        {<<"disposition">>,<<"inline">>}}],
+        [{<<"charset">>, <<"UTF-8">>}],
+        {<<"disposition">>, <<"inline">>}}],
       Body};
     _ -> error
   end.
@@ -99,8 +99,8 @@ gen_multipart_alternative(Headers, Bodies) ->
   {<<"multipart">>, <<"alternative">>,
    Headers ++ [{<<"Content-Type">>, <<"multipart/alternative; boundary=", Boundary/binary>>}],
    [{<<"content-type-params">>, [{<<"boundary">>, Boundary}]},
-    {<<"disposition">>,<<"inline">>},
-    {<<"disposition-params">>,[]}],
+    {<<"disposition">>, <<"inline">>},
+    {<<"disposition-params">>, []}],
    Bodies}.
 
 gen_multipart_mixed(Headers, Bodies) ->
@@ -108,25 +108,25 @@ gen_multipart_mixed(Headers, Bodies) ->
   {<<"multipart">>, <<"mixed">>,
    Headers ++ [{<<"Content-Type">>, <<"multipart/mixed; boundary=", Boundary/binary>>}],
    [{<<"content-type-params">>, [{<<"boundary">>, Boundary}]},
-    {<<"disposition">>,<<"inline">>},
-    {<<"disposition-params">>,[]}],
+    {<<"disposition">>, <<"inline">>},
+    {<<"disposition-params">>, []}],
    Bodies}.
 
 gen_multipart_body({text, Body}) ->
-  {<<"text">>,<<"plain">>,
+  {<<"text">>, <<"plain">>,
    [{<<"Content-Type">>, <<"text/plain;charset=UTF-8">>},
-    {<<"Content-Transfer-Encoding">>,<<"quoted-printable">>}],
-   [{<<"content-type-params">>, [{<<"charset">>,<<"UTF-8">>}]},
-    {<<"disposition">>,<<"inline">>},
-    {<<"disposition-params">>,[]}],
+    {<<"Content-Transfer-Encoding">>, <<"quoted-printable">>}],
+   [{<<"content-type-params">>, [{<<"charset">>, <<"UTF-8">>}]},
+    {<<"disposition">>, <<"inline">>},
+    {<<"disposition-params">>, []}],
    Body};
 gen_multipart_body({html, Body}) ->
-  {<<"text">>,<<"html">>,
-   [{<<"Content-Type">>,<<"text/html;charset=UTF-8">>},
-    {<<"Content-Transfer-Encoding">>,<<"quoted-printable">>}],
-   [{<<"content-type-params">>, [{<<"charset">>,<<"UTF-8">>}]},
-    {<<"disposition">>,<<"inline">>},
-    {<<"disposition-params">>,[]}],
+  {<<"text">>, <<"html">>,
+   [{<<"Content-Type">>, <<"text/html;charset=UTF-8">>},
+    {<<"Content-Transfer-Encoding">>, <<"quoted-printable">>}],
+   [{<<"content-type-params">>, [{<<"charset">>, <<"UTF-8">>}]},
+    {<<"disposition">>, <<"inline">>},
+    {<<"disposition-params">>, []}],
    Body}.
 
 gen_attachment(File) ->
@@ -134,13 +134,13 @@ gen_attachment(File) ->
   {Type, SubType} = bucmime:exploded(File),
   {ok, Binary} = file:read_file(File),
   {Type, SubType,
-   [{<<"Content-Disposition">>,<<"attachment;filename=", Basename/binary, "">>},
+   [{<<"Content-Disposition">>, <<"attachment;filename=", Basename/binary, "">>},
     {<<"Content-Type">>,
      <<Type/binary, "/", SubType/binary, ";x-unix-mode=0644;name=\"", Basename/binary, "\"">>},
-    {<<"Content-Transfer-Encoding">>,<<"base64">>}],
+    {<<"Content-Transfer-Encoding">>, <<"base64">>}],
    [{<<"content-type-params">>,
-     [{<<"x-unix-mode">>,<<"0644">>},{<<"name">>,<<"", Basename/binary>>}]},
-    {<<"disposition">>,<<"attachment">>},
-    {<<"disposition-params">>,[{<<"filename">>,<<"", Basename/binary>>}]}],
+     [{<<"x-unix-mode">>, <<"0644">>}, {<<"name">>, <<"", Basename/binary>>}]},
+    {<<"disposition">>, <<"attachment">>},
+    {<<"disposition-params">>, [{<<"filename">>, <<"", Basename/binary>>}]}],
    Binary}.
 

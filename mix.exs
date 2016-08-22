@@ -22,8 +22,8 @@ defmodule Wok.Mail.Mixfile do
 
   defp deps do
     [
-      {:bucs, "~> 0.1.7"},
-      {:doteki, "~> 0.1.10"},
+      {:bucs, "~> 0.1.8"},
+      {:doteki, "~> 0.1.11"},
       {:gen_smtp, "~> 0.11.0"}    
     ]
   end

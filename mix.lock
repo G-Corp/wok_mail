@@ -1,3 +1,3 @@
 %{"bucs": {:hex, :bucs, "0.1.8", "8293d4aa64777fe7e3dc3a9e573a86dbfcbd434d6ce685a9f445f8560cacbb04", [:rebar3, :mix, :make], []},
-  "doteki": {:hex, :doteki, "0.1.11", "8b6c7ab6c4f1cadb263ac11f67a4ec8e574a8af815b687354f34358c46f13024", [:rebar3, :mix, :make], [{:bucs, "~> 0.1.8", [hex: :bucs, optional: false]}]},
+  "doteki": {:hex, :doteki, "0.1.12", "22ed3219aa7ec67114522afe965c2fe546d92baa34d7859b3df153143c39dd9f", [:rebar3, :mix, :make], [{:bucs, "~> 0.1.8", [hex: :bucs, optional: false]}]},
   "gen_smtp": {:hex, :gen_smtp, "0.11.0", "d90ff2f021fc86cb2a4259b1f2b177ab6e506676265e26454bf5755855adc956", [:rebar3], []}}

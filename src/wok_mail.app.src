@@ -1,6 +1,6 @@
 {application,wok_mail,
              [{description,[]},
-              {vsn,"0.1.4"},
+              {vsn,"0.1.5"},
               {modules,[]},
               {registered,[]},
               {applications,[kernel,stdlib]}]}.

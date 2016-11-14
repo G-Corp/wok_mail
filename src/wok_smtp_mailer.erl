@@ -16,8 +16,8 @@ send(From, Dest, Subject, Bodies, Attachments, Callback) ->
   Headers = [
              {<<"From">>, From},
              {<<"Subject">>, Subject},
-             {<<"MIME-Version">>, <<"1.0">>},
              {<<"Message-ID">>, list_to_binary(smtp_util:generate_message_id())},
+             {<<"Mime-Version">>, <<"1.0">>},
              {<<"Date">>, list_to_binary(smtp_util:rfc5322_timestamp())}
             ] ++ get_dests(Dest),
   HasAttachement = length(Attachments) > 0,
@@ -97,7 +97,7 @@ gen_multipart_alternative(Bodies) ->
 gen_multipart_alternative(Headers, Bodies) ->
   Boundary = list_to_binary(smtp_util:generate_message_boundary()),
   {<<"multipart">>, <<"alternative">>,
-   Headers ++ [{<<"Content-Type">>, <<"multipart/alternative; boundary=", Boundary/binary>>}],
+   Headers ++ [{<<"Content-Type">>, <<"multipart/alternative; boundary=\"", Boundary/binary, "\"">>}],
    [{<<"content-type-params">>, [{<<"boundary">>, Boundary}]},
     {<<"disposition">>, <<"inline">>},
     {<<"disposition-params">>, []}],
@@ -114,7 +114,7 @@ gen_multipart_mixed(Headers, Bodies) ->
 
 gen_multipart_body({text, Body}) ->
   {<<"text">>, <<"plain">>,
-   [{<<"Content-Type">>, <<"text/plain;charset=UTF-8">>},
+   [{<<"Content-Type">>, <<"text/plain;charset=\"utf-8\"">>},
     {<<"Content-Transfer-Encoding">>, <<"quoted-printable">>}],
    [{<<"content-type-params">>, [{<<"charset">>, <<"UTF-8">>}]},
     {<<"disposition">>, <<"inline">>},
@@ -122,7 +122,7 @@ gen_multipart_body({text, Body}) ->
    Body};
 gen_multipart_body({html, Body}) ->
   {<<"text">>, <<"html">>,
-   [{<<"Content-Type">>, <<"text/html;charset=UTF-8">>},
+   [{<<"Content-Type">>, <<"text/html;charset=\"utf-8\"">>},
     {<<"Content-Transfer-Encoding">>, <<"quoted-printable">>}],
    [{<<"content-type-params">>, [{<<"charset">>, <<"UTF-8">>}]},
     {<<"disposition">>, <<"inline">>},

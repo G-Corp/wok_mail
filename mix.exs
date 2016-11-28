@@ -4,7 +4,7 @@ defmodule Wok.Mail.Mixfile do
   def project do
     [
       app: :wok_mail,
-      version: "0.1.5",
+      version: "0.2.0",
       elixir: "~> 1.2",
       build_embedded: Mix.env == :prod,
       start_permanent: Mix.env == :prod,
@@ -22,22 +22,28 @@ defmodule Wok.Mail.Mixfile do
 
   defp deps do
     [
-      {:bucs, "~> 1.0.1"},
-      {:doteki, "~> 1.0.1"},
+      {:bucs, "~> 1.0.2"},
+      {:doteki, "~> 1.0.2"},
       {:gen_smtp, "~> 0.11.0"}    
     ]
   end
 
   defp aliases do
-    [compile: [&pre_compile_hooks/1, "compile", &post_compile_hooks/1]]
+    [compile: &compile_with_hooks/1]
   end
 
-  defp pre_compile_hooks(_) do
+  defp compile_with_hooks(args) do
+    pre_compile_hooks()
+    :ok = Mix.Task.run("compile", args)
+    post_compile_hooks()
+  end
+
+  defp pre_compile_hooks() do
     run_hook_cmd [
     ]
   end
 
-  defp post_compile_hooks(_) do
+  defp post_compile_hooks() do
     run_hook_cmd [
     ]
   end
